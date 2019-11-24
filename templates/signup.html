@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>MeltDown | SignupPage</title>
+
+	<!--Default STYLESHEET -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='fonts/font-awesome.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/w3.css')}}">
+
+	
+
+<!--Default Fonts -->
+	<link rel="stylesheet" href="{{url_for('static',filename='fonts/Lato.css')}}">
+	<link rel="stylesheet" href="{{url_for('static',filename='fonts/openSans.css')}}">
+	<link rel="stylesheet" href="{{url_for('static',filename='fonts/Montserrat.css')}}">
+
+
+	
+<!-- written style sheets  -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/overlay.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/signup.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/image-overlay.css')}}">
+
+    
+
+
+
+<!-- default JS  -->
+    <script type="text/javascript" src="{{ url_for('static',filename='js/jquery-3.4.1.min.js')}}"></script>
+
+<!-- written Script -->
+    <script type="text/javascript" src="{{ url_for('static',filename='js/signup.js')}}"></script>
+
+
+
+</head>
+
+<body style="background-color: #323131;">
+	<!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation" style="color: white; background-color: black">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                 </button>
+                <a class="navbar-brand page-scroll" href="#">MeltDown</a>
+            </div>
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="login" onclick="openNav()"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                    </li> 
+                    <li>
+                        <a href="signup" onclick="openNav()"><span class="glyphicon glyphicon-sign-up"></span> Signup</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+	<!-- SignUp Page Begins -->
+	  <section class="form animated flipInX">
+		  <h1 style="text-align: center; color: white">Create Your Account</h1>
+		  <p class="valid">Valid. Please wait a moment.</p>
+		  <p class="error" id="err">Error. Please check if your passwords match.</p>
+		  <form class="loginbox" autocomplete="off">
+		    <input placeholder="Username" type="text" id="username" style="color: white" required></input>
+		    <input placeholder="Password" type="password" id="password" style="color: white" required></input>
+		    <input placeholder="Repassword" type="password" id="repassword" style="color: white" required></input>
+			<!--<button id="submit" onclick="openNav()" style="text-align: center; color: white">Signup</button>-->
+			<a href="#" id="button" onclick="openNav()" style="text-align: center; color: white">Signup</a>
+		  </form>
+	  </section>
+	 <!-- SignUp Page Ends -->
+
+	 <!-- The overlay Begins-->
+	<div id="myNav" class="overlay">
+
+	  <!-- Button to close the overlay navigation -->
+	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+	  <!-- Overlay content -->
+
+	<div class="imageBox" id="0"></div>
+	<div class="imageBox" id="1"></div>
+	<div class="imageBox" id="2"></div>
+	<div class="imageBox" id="3"></div>
+	<div class="imageBox" id="4"></div>
+	<div class="imageBox" id="5"></div>
+	<div class="imageBox" id="6"></div>
+	<div class="imageBox" id="7"></div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<button type="button" class="btn btn-light btn-lg btn-block" onclick="mainsignup()"> Submit </div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+
+	<!-- The overlay Ends-->
+    <script>
+		/* Open */
+		var arr = [];
+		function openNav() {
+			if($('#password').val() == $('#repassword').val()){
+		  		document.getElementById("myNav").style.width = "100%";
+		 	} 
+		 	else{
+		 		$('#err').css("display","block")
+		 		$('#err').css("color","red")
+		 	}
+		}
+
+		/* Close */
+		function closeNav() {
+		  document.getElementById("myNav").style.width = "0%";
+		}
+
+		/* Select and UnSelect*/
+		function SelectMovie(id){
+			id = parseInt(id)
+			ele = document.getElementById(id)
+			var val = arr.indexOf(id)
+			if(val >= 0){
+				arr.splice(val, 1);
+				ele.children[0].style.border="none";
+			}
+			else{
+				arr.push(id)
+				ele.children[0].style.border= "thick solid #0000FF";
+			}
+		}
+		function mainsignup(){
+			if(arr.length >= 1){
+
+			    $.ajax({
+			            data : JSON.stringify({
+			                username : $('#username').val(),
+			                password : $('#password').val(),
+			                movies : arr
+			            }),
+			            dataType : "json",
+			            contentType: 'application/json',
+			            type : 'POST',
+			            url : 'http://localhost:5000/api/adduser',
+			            success : function(data){
+
+				            if(data.code == 200) {
+				                $.get('http://localhost:5000/api/getUserId/'+$('#username').val(),function(d){
+				                    document.cookie="id="+d.data+"-name="+$('#username').val();
+				                    window.location.href = "/"
+				                });
+				            }
+				            else{
+				                console.log(data.error)
+				                alert(data.error)
+				            }
+			 
+			        }});
+			}
+			else{
+				alert("select atleast 1 movie")
+			}
+		}
+	</script>
+
+</body>
+</html>
